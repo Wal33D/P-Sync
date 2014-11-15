@@ -1,16 +1,16 @@
 CC = gcc
 CFLAGS =
 OBJECTS = pSync.o
-INCFLAGS = 
+INCFLAGS = -w
 LDFLAGS =
-LIBS = -lpthread
+LIBS =  -lpthread
 
 all: pSync
 
-PThreads: $(OBJECTS)
+pSync: $(OBJECTS)
 	$(CC) -o pSync $(OBJECTS) $(LDFLAGS) $(LIBS)
 
-.SUFFIXES:
+
 .SUFFIXES:	.c .cc .C .cpp .o
 
 .c.o :
@@ -20,4 +20,4 @@ count:
 	wc *.c *.cc *.C *.cpp *.h *.hpp
 
 clean:
-	rm pSync.o
+	rm -f *.o, pSync

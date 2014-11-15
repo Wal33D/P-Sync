@@ -31,13 +31,14 @@
 #define NR_THREADS 5
 #define NR_PTRS_PER_THREAD NR_PTS/NR_THREADS
 
-long incircle = 0;
-
+long circleCount = 0;	
+pthread_t *threads;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void *runner() {
+void *monteCarloPi(void *thread_ID) {
 
 	long i;
+	int a = (int) thread_ID;
 	long incircle_thread = 0;
 	unsigned int rand_state = rand();
 
@@ -54,48 +55,72 @@ void *runner() {
 
 		}
 
-	/* Critical Section */
-	pthread_mutex_lock(&mutex);
+	float Pi = (4. * (double)incircle_thread) / ((double)NR_PTRS_PER_THREAD * 1);
+	printf("Thread [%d] Reports Pi to be : %f\n" ,a,Pi);
+	
+	/* Preventing against race conditions on Global circleCount 
+	   (1) Apply the mutual exclusion lock
+	   (2) Add # of points inside the circle to the Global total 
+	   (3) Unlock the mutual exclusion lock
+	 */
 
-	incircle += incircle_thread;
+		pthread_mutex_lock(&mutex);
 
-	pthread_mutex_unlock(&mutex);
+		circleCount += incircle_thread;
+
+		pthread_mutex_unlock(&mutex);
 
 }
 
+void createThreads(){
+	
+	int i;
+	
+	int *a = malloc(sizeof(*a));
+
+	threads = malloc(NR_THREADS * sizeof(pthread_t));
+
+	pthread_attr_t attr;
+		
+	pthread_attr_init(&attr);
+	
+	for (i = 0; i < NR_THREADS; i++) {
+		
+		pthread_create(&threads[i], &attr, monteCarloPi,  (void *) i);
+
+	}
+
+}
+
+void joinThreads(){
+
+	int i;
+
+	for (i = 0; i < NR_THREADS; i++) {
+		
+		pthread_join(threads[i], NULL);
+		
+	}
+	
+	pthread_mutex_destroy(&mutex);
+	
+	free(threads);
+}
 /* Calculate Pi by the Monte Carlo method. Program arguments are the total number of random
  * points to use in the calculation and the number of threads to use. 
  */
 int main(int argc, const char *argv[]) {
-		
-		srand((unsigned)time(NULL));
-		
-		pthread_t *threads = malloc(NR_THREADS * sizeof(pthread_t));
-		
-		pthread_attr_t attr;
-		
-		pthread_attr_init(&attr);
-		
-		int i;
+
+	float Pi;
+
+	createThreads();
+
+	joinThreads();
 	
-		for (i = 0; i < NR_THREADS; i++) {
-		
-			pthread_create(&threads[i], &attr, runner, (void *) NULL);
-		
-		}
-		
-		for (i = 0; i < NR_THREADS; i++) {
-		
-			pthread_join(threads[i], NULL);
-		
-		}
+	Pi = (4. * (double)circleCount) / ((double)NR_PTRS_PER_THREAD * NR_THREADS);
+
+	printf("Final Pi: %f\n", Pi);
 	
-		pthread_mutex_destroy(&mutex);
-	
-		free(threads);
-		
-		printf("Pi: %f\n", (4. * (double)incircle) / ((double)NR_PTRS_PER_THREAD * NR_THREADS));
-	
-	return 0;
+return 0;
 
 }
