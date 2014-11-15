@@ -3,7 +3,7 @@ CFLAGS =
 OBJECTS = pSync.o
 INCFLAGS = 
 LDFLAGS =
-LIBS =-lpthread
+LIBS = -lpthread
 
 all: pSync
 
