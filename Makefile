@@ -3,7 +3,7 @@ CFLAGS =
 OBJECTS = pSync.o
 INCFLAGS = 
 LDFLAGS =
-LIBS =  -lpthread
+LIBS =-lpthread
 
 all: pSync
 
@@ -20,4 +20,4 @@ count:
 	wc *.c *.cc *.C *.cpp *.h *.hpp
 
 clean:
-	rm -f pSync.o, pSync
+	rm pSync.o
