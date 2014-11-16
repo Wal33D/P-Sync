@@ -26,10 +26,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <errno.h>
 
 #define NR_PTS 10000000
 #define NR_THREADS 5
 #define NR_PTRS_PER_THREAD NR_PTS/NR_THREADS
+
+/*Error handling for pthread_create and pthread_join*/
+#define handle_error_en(en, msg) \
+        do { errno = en; perror(msg); exit(EXIT_FAILURE); } while (0)
 
 long circleCount = 0;	
 pthread_t *threads;
@@ -74,7 +79,7 @@ void *monteCarloPi(void *thread_ID) {
 
 void createThreads(){
 	
-	int i;
+	int i, s;
 	
 	int *a = malloc(sizeof(*a));
 
@@ -84,26 +89,40 @@ void createThreads(){
 		
 	pthread_attr_init(&attr);
 	
+	printf("\n----------------------------------------\n*Creating [%d] Threads\n\n", NR_THREADS);
+	
 	for (i = 0; i < NR_THREADS; i++) {
 		
-		pthread_create(&threads[i], &attr, monteCarloPi,  (void *) i);
-
+		s = pthread_create(&threads[i], &attr, monteCarloPi,  (void *) i);
+	 	 /*if we recieve anything other than 0 we have a create error*/
+		 if (s != 0){
+		 	/*handle error*/
+			handle_error_en(s, "pthread_create");
+		 
+		 }
 	}
 
 }
 
 void joinThreads(){
 
-	int i;
-
+	int i,s;
+	
 	for (i = 0; i < NR_THREADS; i++) {
 		
-		pthread_join(threads[i], NULL);
-		
+		s = pthread_join(threads[i], NULL);
+		 /*if we recieve anything other than 0 we have a join error*/
+		 if (s != 0){
+		 	/*handle error*/
+			handle_error_en(s, "pthread_join");
+		 
+		 }
 	}
 	
 	pthread_mutex_destroy(&mutex);
 	
+	printf("\n*[%d] Threads Rejoined\n\n", NR_THREADS);
+
 	free(threads);
 }
 /* Calculate Pi by the Monte Carlo method. Program arguments are the total number of random
@@ -119,7 +138,7 @@ int main(int argc, const char *argv[]) {
 	
 	Pi = (4. * (double)circleCount) / ((double)NR_PTRS_PER_THREAD * NR_THREADS);
 
-	printf("Final Pi: %f\n", Pi);
+	printf("Final Estimation of Pi: %f\n\n----------------------------------------\n", Pi);
 	
 return 0;
 
