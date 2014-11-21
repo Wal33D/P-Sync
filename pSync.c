@@ -25,7 +25,6 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <errno.h>
 
 #define NR_PTS 10000000
@@ -77,7 +76,7 @@ void *monteCarloPi(void *thread_ID) {
 				((double)NR_PTRS_PER_THREAD * 1);
 
 	/* Report to the console, this threads calculation of Pi */
-	printf("Thread [%d] Reports Pi to be : %f\n" ,a,Pi);
+	printf("Thread [%d] Reports Pi to be [%f]\n" ,a,Pi);
 	
 	/* Preventing against race conditions on Global circleCount 
 	   (1) Apply the mutual exclusion lock
@@ -92,6 +91,7 @@ void *monteCarloPi(void *thread_ID) {
 		pthread_mutex_unlock(&mutex);
 
 return NULL;
+
 }
 
 /*
@@ -106,7 +106,7 @@ void createThreads(){
 
 	pthread_attr_t attr; /* Pthread attribute init */
 		
-	pthread_attr_init(&attr);
+	pthread_attr_init(&attr); /* Pthread attribute init */
 	
 	printf("\n----------------------------------------\n*Creating [%d] Threads\n\n", NR_THREADS);
 	/* Create 1 thread for each NR_THREADS */
@@ -150,7 +150,7 @@ void joinThreads(){
 	/* Prompt user, all threads joined */
 	printf("\n*[%d] Threads Rejoined\n\n", NR_THREADS);
 	
-	/* Free space used by threads */
+	/* Free allocated space used by threads */
 	free(threads);
 }
 /* main() acts as the controller, first calling createThreads

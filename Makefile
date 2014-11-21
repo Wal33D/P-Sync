@@ -20,4 +20,5 @@ count:
 	wc *.c *.cc *.C *.cpp *.h *.hpp
 
 clean:
-	rm -f *.o, pSync
+	rm -f *.o
+	rm -f pSync
