@@ -1,26 +1,21 @@
-/**************************************************************************************
-* Course: CS 4540 – Operating Systems – Fall 2014
-* Assignment <4>  – Process Synchronization
-* Name: <Waleed Gudah>
-* E-mail: <waleed.h.gudah@wmich.edu>
-* Submitted: <11/16/14>
-
-	Write a multithreaded version of this algorithm that creates five
-	threads, each of which:
-
-		(i) generates a predefined number of random points
-
-		(ii) determines if the points fall within the circle, and 
-
-		(iii) counts the number of points that fall within the circle.
-	
-	Each thread updates the shared global count circleCount of all points that fall within the circle. Protect against
-	race conditions on updates to circleCount by using mutex locks.
-	When all thread have exited, the parent thread will calculate and output the estimated value of π.
-
- NOTE: 
-		"make" to compile, "./pSync" to run
-/****************************************************************************************/
+//
+//Process Synchronization
+//	Write a multithreaded version of this algorithm that creates five
+//	threads, each of which:
+//
+//		(i) generates a predefined number of random points
+//
+//		(ii) determines if the points fall within the circle, and 
+//
+//		(iii) counts the number of points that fall within the circle.
+//	
+//	Each thread updates the shared global count circleCount of all points that fall within the circle. Protect against
+//	race conditions on updates to circleCount by using mutex locks.
+//	When all thread have exited, the parent thread will calculate and output the estimated value of π.
+//
+// NOTE: 
+//		"make" to compile, "./pSync" to run
+//
 
 #include <pthread.h>
 #include <stdio.h>

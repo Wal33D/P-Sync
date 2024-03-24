@@ -1,14 +1,14 @@
 CC = gcc
 CFLAGS =
-OBJECTS = pSync.o
+OBJECTS = processSync.o
 INCFLAGS = -w
 LDFLAGS =
 LIBS =  -lpthread
 
-all: pSync
+all: processSync
 
-pSync: $(OBJECTS)
-	$(CC) -o pSync $(OBJECTS) $(LDFLAGS) $(LIBS)
+processSync: $(OBJECTS)
+	$(CC) -o processSync $(OBJECTS) $(LDFLAGS) $(LIBS)
 
 
 .SUFFIXES:	.c .cc .C .cpp .o
@@ -21,4 +21,4 @@ count:
 
 clean:
 	rm -f *.o
-	rm -f pSync
+	rm -f processSync
